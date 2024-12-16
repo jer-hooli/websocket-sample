@@ -1,0 +1,12 @@
+FROM eclipse-temurin:17-jre-alpine
+
+# Install font packages
+RUN apk --no-cache add ttf-dejavu fontconfig
+
+
+COPY target/*.jar app.jar
+
+# Original entrypoint
+ENTRYPOINT ["java","-jar", "/app.jar"]
+
+
