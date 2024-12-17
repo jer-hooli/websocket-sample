@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600" # Keep connections alive for WebSockets
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600" # Extend timeout for long connections
+    nginx.ingress.kubernetes.io/websocket-services: "websocket-poc-service" # Specify WebSocket service name
+    # nginx.ingress.kubernetes.io/ssl-redirect: "false" # Disable SSL redirect if using HTTP (optional)
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: example.com # Replace with your domain
+      http:
+        paths:
+          # Route for UI (frontend) service
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ui-service # Name of your UI (frontend) service
+                port:
+                  number: 80 # Port exposed by the service
+
+    - host: api.example.com # Replace with your domain
+      http:
+        paths:
+          # Route for WebSocket service
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: websocket-poc-service # Name of your WebSocket service
+                port:
+                  number: 8080 # Port exposed by the service
+

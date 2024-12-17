@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-poc-deployment
+  labels:
+    app: websocket-poc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websocket-poc
+  template:
+    metadata:
+      labels:
+        app: websocket-poc
+    spec:
+      containers:
+        - name: websocket-poc
+          image: websocket-poc:latest # Replace with your Docker image
+          ports:
+            - containerPort: 8080 # Default port for Spring Boot apps

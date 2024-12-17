@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StompSessionProvider,
   useSubscription,
@@ -14,7 +14,7 @@ type Message = {
 
 export default function Chat() {
   return (
-    <StompSessionProvider url="ws://localhost:8080/chat">
+    <StompSessionProvider url="ws://api.example.com/chat">
       <ChatUI />
     </StompSessionProvider>
   );
@@ -30,6 +30,31 @@ function ChatUI() {
     setMessages((prevMessages) => [...prevMessages, JSON.parse(message.body)]);
   });
 
+  const fetchLogRequest = () => {
+    const url = `http://api.example.com/api/log-request`;
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Network response was not ok: ${response.statusText}`
+          );
+        }
+        return response.text();
+      })
+      .then((data) => {
+        console.log("Response from server:", data);
+      })
+      .catch((error) => {
+        console.error("Error during fetch:", error);
+      });
+  };
+
   // Send a message
   const sendMessage = () => {
     if (input.trim() && stompClient) {
@@ -40,6 +65,10 @@ function ChatUI() {
       setInput("");
     }
   };
+
+  useEffect(() => {
+    fetchLogRequest();
+  }, []);
 
   return (
     <div className="max-w-lg mx-auto mt-10 flex flex-col border border-gray-300 rounded-lg overflow-hidden">
